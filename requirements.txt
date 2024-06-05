@@ -1,0 +1,9 @@
+django
+Pillow
+celery
+redis
+langchain
+replicate
+python-dotenv
+cloudinary
+langchain-google-genai

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Search Results</title>
+  <script>
+    function searchByImage() {
+        const imageData = document.getElementById("upload_file").files[0]; // Assuming your file input ID is "upload_file"
+
+        if (!imageData) {
+            alert("Please select an image to search");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.readAsDataURL(imageData);
+
+        reader.onloadend = function () {
+            const imageDataBase64 = reader.result.split(",")[1]; // Extract base64 data
+
+            // Send AJAX request to trigger search
+            fetch("/search-by-image/", {
+            method: "POST",
+            body: JSON.stringify({ image_data: imageDataBase64 }),
+            headers: { "Content-Type": "application/json" },
+            })
+            .then(response => response.json())
+            .then(data => {
+                const searchResults = document.getElementById("search-results");
+                searchResults.innerHTML = data.results; // Update results container with data from Django view
+            })
+            .catch(error => {
+                console.error("Error fetching search results:", error);
+                alert("Failed to retrieve search results. Please try again.");
+            });
+        };
+    }
+  </script>
+</head>
+<body>
+  <script>
+    // Call the searchByImage function if needed (e.g., on a button click)
+  </script>
+</body>
+</html>

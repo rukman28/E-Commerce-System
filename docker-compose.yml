@@ -1,0 +1,39 @@
+networks:
+  app-network:
+
+services:
+  web:
+    build:
+      context: .
+      target: dev
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    env_file:
+      - .env
+    networks:
+      - app-network
+    volumes:
+      - .:/fashion_classifier_django  # Mount the current directory as a volume
+
+  celery:
+    build:
+      context: .
+      target: dev
+    command: celery -A fashion_classifier_django worker --scheduler django --loglevel=info
+    depends_on:
+      - web
+      - redis
+    env_file:
+      - .env
+    networks:
+      - app-network
+    volumes:
+      - .:/fashion_classifier_django  # Mount the current directory as a volume
+
+  redis:
+    image: redis:latest
+    networks:
+      - app-network
